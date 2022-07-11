@@ -1,5 +1,5 @@
 import Image from "next/image";
-import {  RiSettings3Line } from "react-icons/ri";
+import { RiSettings3Line } from "react-icons/ri";
 import { AiOutlineDown } from "react-icons/ai";
 import ethLogo from "../Assets/ethCurrency.png";
 import { useContext, useEffect } from "react";
@@ -26,19 +26,21 @@ const style = {
   currencySelectorTicket: "mx-2",
   currencySelectorArrow: "text-3xl",
   confirmButton:
-    "bg-[#CF0063] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]",
+    "bg-[#CF0063] hover:bg-[#CF0058] my-2 rounded-2xl py-4 px-8 text-xl font-semibold flex items-center justify-center cursor-pointer border border-[#2172E5] hover:border-[#234169]",
 };
 
 const customStyles = {
   content: {
-    top: "10%",
-    bottom: "auto",
-    left: "40%",
-    right: "auto",
-    transform: "translate(-50% -50%)",
-    backgroundColor: "#0a0b0d",
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    backgroundColor: "#DDD",
+    width: '18rem',
+    height: '16rem',
+    margin: 'auto',
     padding: 0,
     border: "none",
+    borderRadius: "0.75rem"
   },
   overlay: {
     backgroundColor: "rgba(10, 11, 13, 0.75)",
@@ -46,8 +48,14 @@ const customStyles = {
 };
 
 const Main = () => {
-  const { formData, handleChange, sendTransactions, clearFormData, txSuccessful} =
-    useContext(TransactionContext);
+  const {
+    formData,
+    handleChange,
+    sendTransactions,
+    setFormData,
+    clearFormData,
+    txSuccessful,
+  } = useContext(TransactionContext);
   const router = useRouter();
 
   const handleSubmit = async (e) => {
@@ -55,23 +63,24 @@ const Main = () => {
     const { addressTo, amount } = formData;
     if (!addressTo || !amount) return;
     else {
-      await sendTransactions().then(()=> {clearFormData()});
+      await sendTransactions();
       // setFormData({addressTo: "", amount:""});
       // console.log("button was clicked")
     }
   };
 
-  // useEffect(() => {
-  //  clearFormData();
-  // }, [txSuccessful])
-  
-  
+  useEffect(() => {
+    setFormData({ addressTo: "", amount: "" });
+    console.log(formData)
+  }, [txSuccessful])
+
+  console.log(formData);
 
   return (
     <div className={style.wrapper}>
       <div className={style.content}>
         <div className={style.formHeader}>
-          <div>Swap</div>
+          <div>Send</div>
           <div>
             <RiSettings3Line />{" "}
           </div>
@@ -82,7 +91,9 @@ const Main = () => {
             className={style.transferPropInput}
             pattern="[0-9]*[.,]?[0-9]*$"
             placeholder="0.0"
-            onChange={(e) => handleChange(e, "amount")}
+            onChange={(e) => handleChange(e)}
+            name="amount"
+            value={formData.amount}
           />
           <div className={style.currencySelector}>
             <div className={style.currencySelectorContent}>
@@ -99,7 +110,9 @@ const Main = () => {
             type={"text"}
             className={style.transferPropInput}
             placeholder="0x..."
-            onChange={(e) => handleChange(e, "addressTo")}
+            onChange={(e) => handleChange(e)}
+            name="addressTo"
+            value={formData.addressTo}
           />
           <div className={style.currencySelector}> </div>
         </div>

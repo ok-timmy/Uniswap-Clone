@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { useContext, useEffect, useState } from "react";
 import { TransactionContext } from "../context/TransactionContext";
-import { client } from "../lib/sanityClient";
 import ethLogo from "../Assets/ethCurrency.png";
 import { FiArrowUpRight } from "react-icons/fi";
+import { useRouter } from "next/router";
 
 const style = {
   wrapper:
@@ -17,20 +17,20 @@ const style = {
 };
 
 const TransactionHistory = () => {
-  const { isLoading, currentAccount, txSuccessful } = useContext(TransactionContext);
-  const [transactionHistory, setTransactionHistory] = useState();
+  const { isLoading, currentAccount, transactionHistory } =
+    useContext(TransactionContext);
+  // const [transactionHistory, setTransactionHistory] = useState();
 
-  useEffect(() => {
-    (async () => {
-      if (!isLoading && currentAccount) {
-        const query = `*[_type=="users" && _id == "${currentAccount}"] {
-                "transactionList" : transactions[] -> {amount, toAddress, timeStamp, txHash} | order(timeStamp desc) [0..4]
-            }`;
-        const clientRes = await client.fetch(query);
-        setTransactionHistory((clientRes[0].transactionList));
-      }
-    })();
-  }, [isLoading, currentAccount, txSuccessful]);
+ 
+
+  // useEffect(() => {
+  //   async () => {
+  //     await getHistory();
+  //   };
+  // }, [isLoading, currentAccount]);
+
+  // const router = useRouter();
+  
 
   // console.log(transactionHistory)
 
@@ -39,33 +39,37 @@ const TransactionHistory = () => {
       <div>
         {transactionHistory &&
           transactionHistory?.map((transaction, index) => {
-            return <div className={style.txHistoryItem} key={index}>
-              {" "}
-              <div className={style.txDetails}>
-                <Image src={ethLogo} alt={"ethLogo"} width={15} height={20}/>
-                {transaction.amount} sent To{" "}
-                <span className={style.toAddress }>
-                  {transaction && transaction.toAddress.substring(0,6)}
-                </span>
-              </div>{" "}
-              On {" "}
-              <div className={style.txTimestamp}>
-                {new Date(transaction.timeStamp).toLocaleString("en-US", {
-                  timeZone: "Europe/London",
-                  hour12: true,
-                  timeStyle: "short",
-                  dateStyle: "long",
-                })}
+            return (
+              <div className={style.txHistoryItem} key={index}>
+                {" "}
+                <div className={style.txDetails}>
+                  <Image src={ethLogo} alt={"ethLogo"} width={15} height={20} />
+                  {transaction.amount} sent To{" "}
+                  <span className={style.toAddress}>
+                    {transaction && transaction.toAddress.substring(0, 6)}
+                  </span>
+                </div>{" "}
+                On{" "}
+                <div className={style.txTimestamp}>
+                  {new Date(transaction.timeStamp).toLocaleString("en-US", {
+                    timeZone: "Europe/London",
+                    hour12: true,
+                    timeStyle: "short",
+                    dateStyle: "long",
+                  })}
+                </div>
+                <div className={style.etherscanlink}>
+                  <a
+                    href={`https://rinkeby.etherscan.io/tx/${transaction.txHash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={style.etherscanlink}
+                  >
+                    View On Etherscan <FiArrowUpRight />{" "}
+                  </a>
+                </div>
               </div>
-              <div className={style.etherscanlink}>
-                <a
-                  href={`https://rinkeby.etherscan.io/tx/${transaction.txHash}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className={style.etherscanlink}
-                >View On Etherscan <FiArrowUpRight/> </a>
-              </div>
-            </div>;
+            );
           })}
       </div>
     </div>

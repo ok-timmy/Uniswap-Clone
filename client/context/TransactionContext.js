@@ -47,12 +47,13 @@ export const TransactionProvider = ({ children }) => {
     amount: "",
   });
   const [txSuccessful, setTxSuccessful] = useState(true);
-  const resetFormData = {
-    addressTo: "",
-    amount: "",
-  }
+  const [transactionHistory, setTransactionHistory] = useState();
 
   const router = useRouter();
+
+  const clearFormData = () => {
+    setFormData({ addressTo: "", amount: "" });
+  };
 
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -70,6 +71,7 @@ export const TransactionProvider = ({ children }) => {
 
         await client.createIfNotExists(userDoc);
       })();
+    getHistory();
   }, [currentAccount]);
 
   useEffect(() => {
@@ -79,6 +81,17 @@ export const TransactionProvider = ({ children }) => {
       router.push("/");
     }
   }, [isLoading]);
+
+  // Gets Transaction History
+  const getHistory = async () => {
+    if (!isLoading && currentAccount) {
+      const query = `*[_type=="users" && _id == "${currentAccount}"] {
+              "transactionList" : transactions[] -> {amount, toAddress, timeStamp, txHash} | order(timeStamp desc) [0..4]
+          }`;
+      const clientRes = await client.fetch(query);
+      setTransactionHistory(clientRes[0].transactionList);
+    }
+  };
 
   // Connects the wallet present in the metamask to the app
   const connectWallet = async (metamask = eth) => {
@@ -109,6 +122,7 @@ export const TransactionProvider = ({ children }) => {
         const accountBalance = await getBalance(accounts[0]);
         setCurrentBalance(`${accountBalance} ETH`);
         setCurrentAccount(accounts[0]);
+        await getHistory();
         console.log("Wallet Is already Connected");
       }
     } catch (error) {
@@ -157,58 +171,58 @@ export const TransactionProvider = ({ children }) => {
     try {
       console.log("function executed till this point");
       if (!metamask) return alert("Please Install Metamask!");
-      const { addressTo, amount } = formData;
-      const transactionContract = getEthereumContract();
+      else {
+        const { addressTo, amount } = formData;
+        const transactionContract = getEthereumContract();
 
-      const parsedAmount = ethers.utils.parseEther(amount);
+        const parsedAmount = ethers.utils.parseEther(amount);
 
-      await metamask.request({
-        method: "eth_sendTransaction",
-        params: [
-          {
-            from: connectedAccount,
-            to: addressTo,
-            gas: "0x7EF40", //52000 Gwei
-            value: parsedAmount._hex,
-          },
-        ],
-      });
+        await metamask.request({
+          method: "eth_sendTransaction",
+          params: [
+            {
+              from: connectedAccount,
+              to: addressTo,
+              gas: "0x7EF400", //52000 Gwei
+              value: parsedAmount._hex,
+            },
+          ],
+        });
 
-      const transactionHash = await transactionContract.publishTransaction(
-        addressTo,
-        parsedAmount,
-        `Transferring ETH ${parsedAmount} to ${addressTo}`,
-        "TRANSFER"
-      );
+        const transactionHash = await transactionContract.publishTransaction(
+          addressTo,
+          parsedAmount,
+          `Transferring ETH ${parsedAmount} to ${addressTo}`,
+          "TRANSFER"
+        );
 
-      setIsLoading(true);
+        setIsLoading(true);
 
-      await transactionHash.wait();
+        await transactionHash.wait();
 
-      await saveTransaction(
-        transactionHash.hash,
-        amount,
-        connectedAccount,
-        addressTo
-      ).then(() => {
-        console.log("Transaction Successful");
+        await saveTransaction(
+          transactionHash.hash,
+          amount,
+          connectedAccount,
+          addressTo
+        ).then(async () => {
+          await getHistory();
+        });
+        setIsLoading(false);
         setTxSuccessful(!txSuccessful);
-      });
-      setIsLoading(false);
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
   // Handle change function that calls whenever any change occurs in any of the input fields.
-  const handleChange = (e, name) => {
-    setFormData((prevState) => ({ ...prevState, [name]: e.target.value }));
+  const handleChange = (e) => {
+    setFormData((prevState) => ({ ...prevState, [e.target.name]: e.target.value }));
     console.log(formData);
   };
 
-  const clearFormData = () => {
-    setFormData({ ...resetFormData });
-  };
+ 
 
   return (
     <TransactionContext.Provider
@@ -222,6 +236,8 @@ export const TransactionProvider = ({ children }) => {
         isLoading,
         txSuccessful,
         clearFormData,
+        setFormData,
+        transactionHistory,
       }}
     >
       {children}{" "}
