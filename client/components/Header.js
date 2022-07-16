@@ -85,6 +85,17 @@ export const Header = () => {
           >
             Swap
           </div>
+          {currentAccount && <div
+            onClick={() => {
+              setSelectedNav("vote");
+            }}
+            className={`${style.navItem} ${
+              selectedNav === "pool" && style.activeNavItem
+            }`}
+          >
+            Vote
+          </div>}
+
           <div
             onClick={() => {
               setSelectedNav("pool");

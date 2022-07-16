@@ -11,7 +11,8 @@ context("Test Uniswap App", ()=> {
           });
           cy.get('#__next > div > div:nth-child(1) > div:nth-child(1) > div:nth-child(2)')
           cy.get('#__next > div > div:nth-child(1) > div:nth-child(2) > div:nth-child(2)> div:nth-child(1)').click();
-        
+      
+          
     })
     
     // it("Send Eth To An Address", ()=> {
