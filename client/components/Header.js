@@ -39,8 +39,8 @@ export const Header = () => {
     headerLogo: `${!(width<= 640)? 'md:flex md:w-1/4 md:items-center md:justify-start' : 'xs:absolute xs:left-4 xs:top-4' }`,
     nav: `${!(width<= 640) ?' md:flex-1 md:flex md:justify-center md:items-center' : 'xs:absolute xs:bottom-6 xs:object-center' }`,
     navItemContainer: "flex bg-[#FFF] rounded-3xl text-black",
-    navItem: "px-4 m-1 flex items-center text-md font-semibold rounded-2xl hover:bg-[#F7F8FA] cursor-pointer",
-    activeNavItem: "bg-[#F7F8FA]",
+    navItem: "px-4 m-1 flex items-center cursor-pointer text-md font-semibold rounded-2xl hover:bg-[#F7F8FA]",
+    activeNavItem: "bg-[#F7F8FA] cursor-pointer",
     buttonsContainer: "flex  justify-end items-center",
     button:
       "flex items-center bg-[#FFF] rounded-2xl mr-2 text-[1rem] text-black font-semibold cursor-pointer",
