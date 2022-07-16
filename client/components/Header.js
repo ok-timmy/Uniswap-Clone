@@ -8,34 +8,62 @@ import uniswapLogo from "../Assets/uniswap.png";
 import ethLogo from "../Assets/ethCurrency.png"
 
 
-const style = {
-  wrapper: `p-4 w-screen flex justify-between items-center`,
-  left: `flex`,
-  headerLogo: "flex w-1/4 items-center justify-start",
-  nav: "flex-1 flex justify-center items-center",
-  navItemContainer: "flex bg-[#FFF] rounded-3xl text-black",
-  navItem: "px-4 m-1 flex items-center text-md font-semibold rounded-2xl",
-  activeNavItem: "bg-[#F7F8FA]",
-  buttonsContainer: "flex  justify-end items-center",
-  button:
-    "flex items-center bg-[#FFF] rounded-2xl mx-2 text-[0.9rem] text-black font-semibold cursor-pointer",
-  buttonPadding: "px-2 py-1",
-  buttonTextContainer: "h-8 flex items-center",
-  buttonIconContainer: "flex items-center justify-center w-8 h-8",
-  buttonAccent:
-    "bg-[#F7F8FA] border hover:border-[#234169] h-full rounded-2xl flex items-center justify-center text-black",
-};
+ 
+const useWindowWidth = () => {
+  const [windowWidth, setWindowWidth] = useState(undefined);
+  
+useEffect(() => {
+  if(typeof window !== 'undefined') {
+    const handleResize = ()=> {
+      setWindowWidth(window.innerWidth);
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return ()=> window.removeEventListener("resize", handleResize);
+  }
+}, []);
+
+return windowWidth;
+
+}
+
 
 export const Header = () => {
+
+  const width = useWindowWidth();
+  // console.log(width);
+  
+  const style = {
+    wrapper: `px-4 pt-3 w-screen flex justify-between items-center`,
+    left: `flex`,
+    headerLogo: `${!(width<= 640)? 'md:flex md:w-1/4 md:items-center md:justify-start' : 'xs:absolute xs:left-4 xs:top-4' }`,
+    nav: `${!(width<= 640) ?' md:flex-1 md:flex md:justify-center md:items-center' : 'xs:absolute xs:bottom-6 xs:object-center' }`,
+    navItemContainer: "flex bg-[#FFF] rounded-3xl text-black",
+    navItem: "px-4 m-1 flex items-center text-md font-semibold rounded-2xl",
+    activeNavItem: "bg-[#F7F8FA]",
+    buttonsContainer: "flex  justify-end items-center",
+    button:
+      "flex items-center bg-[#FFF] rounded-2xl mr-2 text-[1rem] text-black font-semibold cursor-pointer",
+    buttonPadding: "px-1 py-1",
+    buttonTextContainer: "h-8 flex items-center",
+    buttonIconContainer: "flex items-center justify-center w-8 h-8",
+    buttonAccent:
+    "bg-[#FDEAF1] border hover:border-[#f591b6] h-full rounded-2xl flex items-center justify-center text-[#BC005A]",
+  };
+
+ 
   const [selectedNav, setSelectedNav] = useState("swap");
   const { connectWallet, currentAccount, currentBalance } = useContext(TransactionContext);
   const [userName, setUserName] = useState();
-
-  console.log(currentBalance);
-
+  
+  // console.log(currentBalance);
+  
+  
   useEffect(() => {
-  currentAccount && setUserName(`${currentAccount.slice(0,7)}...${currentAccount.slice(35)}`)
+    currentAccount && setUserName(`${currentAccount.slice(0,7)}...${currentAccount.slice(35)}`)
   }, [currentAccount])
+ 
+  
   
   
 
@@ -87,7 +115,7 @@ export const Header = () => {
           <div className={style.buttonIconContainer}>
             <Image src={ethLogo} alt="alt logo" height={20} width={20} />
           </div>
-          <p>Ethereum</p>
+          <p className={`${(width<640) &&'xs:hidden'}`}>Ethereum</p>
 
           <div className={style.buttonIconContainer}>
             <AiOutlineDown />
@@ -96,7 +124,7 @@ export const Header = () => {
         {currentAccount ? (
           <div
             className={`${style.button} ${style.buttonPadding}`}
-          > {currentBalance}
+          > <span className={`${(width<640) && "hidden"}`}>{ currentBalance} </span>
             <div className={`${style.buttonAccent} ${style.buttonPadding} ml-2`}>
               {" "}
               {userName}
@@ -105,9 +133,10 @@ export const Header = () => {
         ) : (
           <div
             onClick={() => connectWallet()}
-            className={`${style.button} ${style.buttonPadding}`}
+            className={`${style.button}`}
+            style={{padding:"2px"}}
           >
-            <div className={`${style.buttonAccent} ${style.buttonPadding}`}>
+            <div className={`${style.buttonAccent} ${style.buttonPadding} px-3`} style={{padding:"7px 20px"}}>
               {" "}
               Connect Wallet
             </div>

@@ -1,38 +1,24 @@
 import Image from "next/image";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { TransactionContext } from "../context/TransactionContext";
 import ethLogo from "../Assets/ethCurrency.png";
 import { FiArrowUpRight } from "react-icons/fi";
-import { useRouter } from "next/router";
 
-const style = {
-  wrapper:
-    "h-full bg-transparent text-white select-none w-screen flex-1 pt-14 flex items-end justify-end pb-12",
-  txHistoryItem:
-    "bg-[#FFF] text-black rounded-lg px-4 py-2 my-2 mr-8 flex items-center justify-end",
-  txDetails: "flex items-center",
-  toAddress: "text-[#f48706] mx-2",
-  txTimestamp: "mx-2",
-  etherscanlink: "flex items-center text-[#2172e5]",
-};
 
 const TransactionHistory = () => {
-  const { isLoading, currentAccount, transactionHistory } =
-    useContext(TransactionContext);
-  // const [transactionHistory, setTransactionHistory] = useState();
-
- 
-
-  // useEffect(() => {
-  //   async () => {
-  //     await getHistory();
-  //   };
-  // }, [isLoading, currentAccount]);
-
-  // const router = useRouter();
   
-
-  // console.log(transactionHistory)
+  const style = {
+    wrapper:
+      "h-full bg-transparent text-white select-none w-screen flex-1 pt-14 flex items-end justify-end pb-12",
+    txHistoryItem:
+      "bg-[#FFF] text-black rounded-lg px-2 py-2 my-2 mr-5 flex items-center justify-end",
+    txDetails: "flex items-center",
+    toAddress: "text-[#f48706] mx-2",
+    txTimestamp: "mx-2",
+    etherscanlink: "flex items-center text-[#2172e5]",
+  };
+  
+  const { transactionHistory } = useContext(TransactionContext);
 
   return (
     <div className={style.wrapper}>
@@ -46,7 +32,11 @@ const TransactionHistory = () => {
                   <Image src={ethLogo} alt={"ethLogo"} width={15} height={20} />
                   {transaction.amount} sent To{" "}
                   <span className={style.toAddress}>
-                    {transaction && transaction.toAddress.substring(0, 6)}
+                    {transaction &&
+                      `${transaction.toAddress.substring(
+                        0,
+                        3
+                      )}..${transaction.toAddress.substring(36)}`}
                   </span>
                 </div>{" "}
                 On{" "}

@@ -32,7 +32,7 @@ const getBalance = async (account) => {
   const accBal = await provider.getBalance(account).then((balance) => {
     // convert a currency unit from wei to ether
     const balanceInEth = Number(ethers.utils.formatEther(balance)).toFixed(4);
-    console.log(`balance: ${balanceInEth} ETH`);
+    // console.log(`balance: ${balanceInEth} ETH`);
     return balanceInEth;
   });
   return accBal;
@@ -123,7 +123,7 @@ export const TransactionProvider = ({ children }) => {
         setCurrentBalance(`${accountBalance} ETH`);
         setCurrentAccount(accounts[0]);
         await getHistory();
-        console.log("Wallet Is already Connected");
+        // console.log("Wallet Is already Connected");
       }
     } catch (error) {
       console.error(error);
