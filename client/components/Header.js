@@ -90,7 +90,7 @@ export const Header = () => {
               setSelectedNav("vote");
             }}
             className={`${style.navItem} ${
-              selectedNav === "pool" && style.activeNavItem
+              selectedNav === "vote" && style.activeNavItem
             }`}
           >
             Vote
