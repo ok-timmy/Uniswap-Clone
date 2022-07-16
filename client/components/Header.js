@@ -85,7 +85,7 @@ export const Header = () => {
           >
             Swap
           </div>
-          {currentAccount && <div
+          {!currentAccount && <div
             onClick={() => {
               setSelectedNav("vote");
             }}
