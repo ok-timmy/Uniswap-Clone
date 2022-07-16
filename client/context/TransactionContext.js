@@ -89,7 +89,11 @@ export const TransactionProvider = ({ children }) => {
               "transactionList" : transactions[] -> {amount, toAddress, timeStamp, txHash} | order(timeStamp desc) [0..4]
           }`;
       const clientRes = await client.fetch(query);
+      if(clientRes) {
       setTransactionHistory(clientRes[0].transactionList);
+      } else {
+        setTransactionHistory(undefined);
+      }
     }
   };
 

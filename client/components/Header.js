@@ -136,7 +136,7 @@ export const Header = () => {
             className={`${style.button}`}
             style={{padding:"2px"}}
           >
-            <div className={`${style.buttonAccent} ${style.buttonPadding} px-3`} style={{padding:"7px 20px"}}>
+            <div id="connect" className={` ${style.buttonAccent} ${style.buttonPadding} px-3`} style={{padding:"7px 20px"}}>
               {" "}
               Connect Wallet
             </div>
